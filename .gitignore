@@ -1,0 +1,87 @@
+# Python-related
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+
+# Django-related
+db.sqlite3
+/media/
+*.log
+*.pot
+*.pyc
+*.mo
+*.swp
+*.swo
+*.~*
+*.out
+*.pid
+
+# Migrations
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Static files
+/static/
+!.gitkeep
+
+# Uploaded media files
+/media/
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# VS Code
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+.idea_modules/
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs and debugging files
+*.log
+*.err
+*.out
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+.nox/
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Python test files
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+*.pyc
+*.pyo
+
+# Build directories
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Docker-related
+*.env
+docker-compose.override.yml
+.dockerignore
+.env.*
+
+# Ignore local configuration files
+local_settings.py
+config/
