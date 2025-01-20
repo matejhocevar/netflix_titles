@@ -46,8 +46,8 @@ docker-compose.yml                   # Docker Compose configuration
    ```
 2.	Set Up a Virtual Environment:
    ```bash
-    python -m venv venv
-    source venv/bin/activate
+   python -m venv venv
+   source venv/bin/activate
    ```
 3. Install Dependencies:
    ```bash
