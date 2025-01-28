@@ -1,6 +1,14 @@
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
 from .models import NetflixTitle
 from .serializers import NetflixTitleSerializer
+
+
+class NetflixTitlePagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+
 
 class NetflixTitleViewSet(ModelViewSet):
     """
@@ -8,6 +16,27 @@ class NetflixTitleViewSet(ModelViewSet):
     """
     queryset = NetflixTitle.objects.all()
     serializer_class = NetflixTitleSerializer
+    pagination_class = NetflixTitlePagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = [
+        'title',
+        'director',
+        'description',
+        'release_year',
+        'country',
+    ]
+    ordering_fields = [
+        'show_id',
+        'title',
+        'type',
+        'director',
+        'duration',
+        'country',
+        'release_year',
+        'rating',
+        'date_added',
+    ]
+    ordering = ['title']
 
     def get_queryset(self):
         """

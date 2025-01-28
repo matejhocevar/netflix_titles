@@ -2,7 +2,7 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: netflix_app
+    container_name: netflix_backend
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
@@ -24,6 +24,16 @@ services:
       - netflix_db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  frontend:
+    build: ./frontend
+    container_name: netflix_frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "8080:80"
+      - "5173:5173"
 
 volumes:
   netflix_db_data:
