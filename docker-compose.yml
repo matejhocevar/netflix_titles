@@ -1,11 +1,11 @@
 services:
-  web:
+  backend:
     build:
-      context: ./netflix
+      context: ./backend
     container_name: netflix_app
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./netflix:/app
+      - ./backend:/app
     ports:
       - "8000:8000"
     env_file:
