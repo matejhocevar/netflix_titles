@@ -78,7 +78,7 @@ export default {
         ordering: `${this.sortDirection === 'asc' ? '' : '-'}${this.sortField}`,
       };
       try {
-        const response = await axios.get('http://localhost:8000/api/titles/', { params });
+        const response = await axios.get('http://localhost:8888/api/titles/', { params });
         this.titles = response.data.results;
         this.previous = response.data.previous;
         this.next = response.data.next;
