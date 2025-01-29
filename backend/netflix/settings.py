@@ -9,12 +9,16 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+
+from dotenv.main import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -53,6 +57,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'netflix_titles',
+    "search_elasticsearch",
+    "algoliasearch_django",
+    "search_algolia",
 ]
 
 MIDDLEWARE = [
@@ -138,3 +145,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Algolia configuration
+ALGOLIA = {
+    "APPLICATION_ID": os.getenv("ALGOLIA_APP_ID"),
+    "API_KEY": os.getenv("ALGOLIA_API_KEY"),
+}

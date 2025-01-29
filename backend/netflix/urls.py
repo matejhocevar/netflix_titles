@@ -9,4 +9,6 @@ router.register(r'titles', NetflixTitleViewSet, basename='title')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path("api/", include("search_elasticsearch.urls")),
+    path("api/", include("search_algolia.urls")),
 ]

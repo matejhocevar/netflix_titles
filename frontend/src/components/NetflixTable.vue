@@ -1,28 +1,33 @@
 <template>
   <div class="container">
-    <!-- Search Bar -->
-    <input v-model="search" @input="fetchTitles(1)" placeholder="Search titles..." class="search-input" />
+    <div class="search-container">
+      <select v-model="searchProvider" class="search-select" @change="fetchTitles(1)">
+        <option value="django">Django</option>
+        <option value="algolia">Algolia</option>
+        <option value="elasticsearch">Elasticsearch</option>
+      </select>
+
+      <input v-model="search" @input="fetchTitles(1)" placeholder="Search titles..." class="search-input" />
+    </div>
 
     <!-- Table -->
     <table class="styled-table">
       <thead>
         <tr>
-          <th @click="sort('show_id')">#</th>
           <th @click="sort('title')">Title</th>
-          <th @click="sort('type')">Type</th>
-          <th @click="sort('director')">Director</th>
-          <th @click="sort('duration')">Duration</th>
           <th @click="sort('release_year')">Release Year</th>
+          <th @click="sort('type')">Type</th>
+          <th @click="sort('duration')">Duration</th>
+          <th @click="sort('director')">Director</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="title in titles" :key="title.show_id" @click="goToDetail(title.show_id)" class="clickable-row">
-          <td>{{ title.show_id }}</td>
           <td>{{ title.title }}</td>
-          <td>{{ title.type }}</td>
-          <td>{{ title.director || '-' }}</td>
-          <td>{{ title.duration || '-' }}</td>
           <td>{{ title.release_year }}</td>
+          <td>{{ title.type }}</td>
+          <td>{{ title.duration || '-' }}</td>
+          <td>{{ title.director || '-' }}</td>
         </tr>
       </tbody>
     </table>
@@ -70,6 +75,7 @@ export default {
     return {
       titles: [],
       search: '',
+      searchProvider: 'django',
       pageSize: 10,
       currentPage: 1,
       previous: null,
@@ -82,14 +88,28 @@ export default {
   },
   methods: {
     async fetchTitles(page = 1) {
+      const host = 'http://localhost:8888';
+      let path;
+      switch (this.searchProvider) {
+        case 'algolia':
+          path = '/api/search/algolia/';
+          break;
+        case 'elasticsearch':
+          path = '/api/search/elasticsearch/';
+          break;
+        default:
+          path = '/api/titles/'; // Default to Django
+      }
+
       const params = {
         search: this.search,
         page: page,
         page_size: this.pageSize,
-        ordering: `${this.sortDirection === 'asc' ? '' : '-'}${this.sortField}`,
+        // ordering: `${this.sortDirection === 'asc' ? '' : '-'}${this.sortField}`, // Temporary disabled because of Algolia
       };
+
       try {
-        const response = await axios.get('http://localhost:8888/api/titles/', { params });
+        const response = await axios.get(host + path, { params });
         this.titles = response.data.results;
         this.previous = response.data.previous;
         this.next = response.data.next;
@@ -134,11 +154,45 @@ export default {
   border-radius: 10px;
 }
 
+/* Search Container */
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* Search Select (Dropdown) */
+.search-select {
+  background-color: #e50914; /* Netflix red */
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  margin-right: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.search-select option {
+  background: black;
+  color: white;
+}
+
+/* Search Input */
+.search-input {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #e50914;
+  border-radius: 4px;
+  background-color: #333;
+  color: white;
+}
+
 /* Search Bar */
 .search-input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 15px;
   border: 2px solid var(--netflix-red);
   border-radius: 5px;
   font-size: 16px;
