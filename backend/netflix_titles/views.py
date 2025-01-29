@@ -37,6 +37,7 @@ class NetflixTitleViewSet(ModelViewSet):
         'date_added',
     ]
     ordering = ['title']
+    lookup_field = 'show_id'
 
     def get_queryset(self):
         """
