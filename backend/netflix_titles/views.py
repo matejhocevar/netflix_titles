@@ -26,15 +26,12 @@ class NetflixTitleViewSet(ModelViewSet):
         'country',
     ]
     ordering_fields = [
-        'show_id',
         'title',
         'type',
         'director',
         'duration',
         'country',
         'release_year',
-        'rating',
-        'date_added',
     ]
     ordering = ['title']
     lookup_field = 'show_id'
