@@ -105,7 +105,7 @@ export default {
         search: this.search,
         page: page,
         page_size: this.pageSize,
-        // ordering: `${this.sortDirection === 'asc' ? '' : '-'}${this.sortField}`, // Temporary disabled because of Algolia
+        ordering: `${this.sortDirection === 'asc' ? '' : '-'}${this.sortField}`, // Temporary disabled because of Algolia
       };
 
       try {
