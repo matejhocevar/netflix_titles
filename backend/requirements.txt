@@ -10,6 +10,8 @@ tzdata==2024.2
 django-cors-headers==4.6.0
 django-filter==24.3
 elasticsearch==8.17.1
+elasticsearch-dsl==8.17.1
+django-elasticsearch-dsl==8.0
 algoliasearch==4.13.0
 algoliasearch-django>=4.0,<5.0
 python_dotenv==1.0.1
