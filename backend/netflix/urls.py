@@ -4,11 +4,11 @@ from django.contrib import admin
 from netflix_titles.views import NetflixTitleViewSet
 
 router = DefaultRouter()
-router.register(r'titles', NetflixTitleViewSet, basename='title')
+# router.register(r'titles', NetflixTitleViewSet, basename='title')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path("api/", include("search_elasticsearch.urls")),
-    path("api/", include("search_algolia.urls")),
+    path('api/django/', include("netflix_titles.urls")),
+    path("api/elasticsearch/", include("search_elasticsearch.urls")),
+    path("api/algolia/", include("search_algolia.urls")),
 ]

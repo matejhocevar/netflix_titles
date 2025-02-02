@@ -6,56 +6,123 @@
         <option value="algolia">Algolia</option>
         <option value="elasticsearch">Elasticsearch</option>
       </select>
-
       <input v-model="search" @input="fetchTitles(1)" placeholder="Search titles..." class="search-input" />
     </div>
 
-    <!-- Table -->
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <th @click="sort('title')">Title</th>
-          <th @click="sort('release_year')">Release Year</th>
-          <th @click="sort('type')">Type</th>
-          <th @click="sort('duration')">Duration</th>
-          <th @click="sort('director')">Director</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="title in titles" :key="title.show_id" @click="goToDetail(title.show_id)" class="clickable-row">
-          <td>{{ title.title }}</td>
-          <td>{{ title.release_year }}</td>
-          <td>{{ title.type }}</td>
-          <td>{{ title.duration || '-' }}</td>
-          <td>{{ title.director || '-' }}</td>
-        </tr>
-      </tbody>
+    <div class="content-wrapper">
+      <!-- Filters Sidebar -->
+      <div class="filters-container">
+        <h3>Filters</h3>
+
+        <!-- Type Filter -->
+        <div class="filter-group">
+          <label>Type:</label>
+          <select v-model="filters.type" multiple @change="fetchTitles(1)" class="filter-select">
+            <option value="">All</option>
+            <option v-for="type in availableTypes" :key="type" :value="type">
+              {{ type }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Release Year Filter -->
+        <div class="filter-group">
+          <label>Release Year:</label>
+          <div class="filters-inline">
+
+          <input type="number" v-model="filters.releaseYearMin" placeholder="Min Year" @input="fetchTitles(1)" class="filter-input" />
+          <input type="number" v-model="filters.releaseYearMax" placeholder="Max Year" @input="fetchTitles(1)" class="filter-input" />
+          </div>
+        </div>
+
+        <!-- Country Filter -->
+        <div class="filter-group">
+          <label>Country:</label>
+          <select v-model="filters.country" multiple @change="fetchTitles(1)" class="filter-select">
+            <option value="">All</option>
+            <option v-for="country in availableCountries" :key="country" :value="country">
+              {{ country }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Rating Filter -->
+        <div class="filter-group">
+          <label>Rating:</label>
+          <select v-model="filters.rating" multiple @change="fetchTitles(1)" class="filter-select">
+            <option value="">All</option>
+            <option v-for="rating in availableRatings" :key="rating" :value="rating">
+              {{ rating }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Duration Filter -->
+        <div class="filter-group">
+          <label>Duration:</label>
+          <select v-model="filters.duration" @change="fetchTitles(1)" class="filter-select">
+            <option value="">All</option>
+            <option value="short">Less than 60 min</option>
+            <option value="medium">60-120 min</option>
+            <option value="long">More than 120 min</option>
+            <option value="1 Season">1 Season</option>
+            <option value="2 Seasons">2 Seasons</option>
+            <option value="3 Seasons">3 Seasons</option>
+            <option value="4 Seasons">4 Seasons</option>
+            <option value="5 Seasons">5 Seasons</option>
+            <option value="5/ Seasons">5+ Seasons</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="content-container">
+        <!-- Table -->
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th @click="sort('title')">Title</th>
+              <th @click="sort('release_year')">Release Year</th>
+              <th @click="sort('type')">Type</th>
+              <th @click="sort('duration')">Duration</th>
+              <th @click="sort('director')">Director</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="title in titles" :key="title.show_id" @click="goToDetail(title.show_id)" class="clickable-row">
+              <td>{{ title.title }}</td>
+              <td>{{ title.release_year }}</td>
+              <td>{{ title.type }}</td>
+              <td>{{ title.duration || '-' }}</td>
+              <td>{{ title.director || '-' }}</td>
+            </tr>
+          </tbody>
     </table>
 
-    <!-- Pagination Controls -->
-    <div class="pagination-container">
-      <p>
-        Showing page {{ currentPage }} of {{ totalPages }} | Total titles: {{ totalCount }}
-      </p>
-      <div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container">
+          <p>
+            Showing page {{ currentPage }} of {{ totalPages }} | Total titles: {{ totalCount }}
+          </p>
+          <div>
+            <label>Items per page:</label>
+            <select v-model="pageSize" @change="fetchTitles(1)" class="page-size-selector">
+              <option :value="10">10</option>
+              <option :value="20">20</option>
+              <option :value="50">50</option>
+              <option :value="100">100</option>
+            </select>
+          </div>
+        </div>
 
-      <label>Items per page:  </label>
-      <select v-model="pageSize" @change="fetchTitles(1)" class="page-size-selector">
-        <option :value="10">10</option>
-        <option :value="20">20</option>
-        <option :value="50">50</option>
-        <option :value="100">100</option>
-      </select>
+        <div class="button-container">
+          <button :disabled="!previous" @click="fetchTitles(currentPage - 1)" class="pagination-btn">Previous</button>
+          <button :disabled="!next" @click="fetchTitles(currentPage + 1)" class="pagination-btn">Next</button>
+        </div>
       </div>
-    </div>
-
-    <div class="button-container">
-      <button :disabled="!previous" @click="fetchTitles(currentPage - 1)" class="pagination-btn">Previous</button>
-      <button :disabled="!next" @click="fetchTitles(currentPage + 1)" class="pagination-btn">Next</button>
     </div>
   </div>
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -73,6 +140,7 @@ export default {
   },
   data() {
     return {
+      host: 'http://localhost:8888/api',
       titles: [],
       search: '',
       searchProvider: 'django',
@@ -84,32 +152,34 @@ export default {
       totalPages: 0,
       sortField: 'title',
       sortDirection: 'asc',
+      filters: {
+        type: [],
+        releaseYearMin: '',
+        releaseYearMax: '',
+        country: [],
+        rating: [],
+      },
+      availableCountries: [],
+      availableRatings: [],
+      availableTypes: [],
     };
   },
   methods: {
     async fetchTitles(page = 1) {
-      const host = 'http://localhost:8888';
-      let path;
-      switch (this.searchProvider) {
-        case 'algolia':
-          path = '/api/search/algolia/';
-          break;
-        case 'elasticsearch':
-          path = '/api/search/elasticsearch/';
-          break;
-        default:
-          path = '/api/titles/'; // Default to Django
-      }
-
       const params = {
         search: this.search,
         page: page,
         page_size: this.pageSize,
-        ordering: `${this.sortDirection === 'asc' ? '' : '-'}${this.sortField}`, // Temporary disabled because of Algolia
+        ordering: `${this.sortDirection === 'asc' ? '' : '-'}${this.sortField}`,
+        // type: this.filters.type.length ? this.filters.type.join(',') : undefined,  // Temporarily disabled due to Algolia index definition issue
+        release_year_gte: this.filters.releaseYearMin || undefined,
+        release_year_lte: this.filters.releaseYearMax || undefined,
+        country: this.filters.country.length ? this.filters.country.join(',') : undefined,
+        rating: this.filters.rating.length ? this.filters.rating.join(',') : undefined,
       };
 
       try {
-        const response = await axios.get(host + path, { params });
+        const response = await axios.get(`${this.host}/${this.searchProvider}/`, {params});
         this.titles = response.data.results;
         this.previous = response.data.previous;
         this.next = response.data.next;
@@ -125,9 +195,21 @@ export default {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
       this.fetchTitles();
     },
+    async fetchFilters() {
+      // Fetch available filters dynamically
+      try {
+        const response = await axios.get(`${this.host}/${this.searchProvider}/filters/`);
+        this.availableCountries = response.data.countries;
+        this.availableRatings = response.data.ratings;
+        this.availableTypes = response.data.types;
+      } catch (error) {
+        console.error('Error fetching filter options:', error);
+      }
+    },
   },
   mounted() {
     this.fetchTitles();
+    this.fetchFilters();
   },
 };
 </script>
@@ -205,6 +287,42 @@ export default {
 .search-input:focus {
   border-color: var(--white);
   box-shadow: 0 0 5px var(--netflix-red);
+}
+
+.content-wrapper {
+  display: flex;
+  gap: 20px;
+}
+
+/* Filters Sidebar */
+.filters-container {
+  flex: 1;
+  padding: 15px;
+  background: var(--dark-gray);
+  border-radius: 10px;
+}
+
+.filters-inline {
+  display: flex;
+}
+
+.filter-select,
+.filter-input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid var(--netflix-red);
+  background: var(--dark-gray);
+  color: var(--white);
+}
+
+.filter-group select[multiple] {
+  height: 80px;
+}
+
+.content-container {
+  flex: 4;
 }
 
 /* Table Styles */
