@@ -18,7 +18,7 @@
 import axios from 'axios';
 
 export default {
-  props: ['show_id'],
+  props: ['search_provider', 'show_id'],
   data() {
     return {
       title: {},
@@ -26,7 +26,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get(`http://localhost:8888/api/titles/${this.show_id}/`);
+      const response = await axios.get(`http://localhost:8888/api/${this.search_provider}/${this.show_id}/`);
       this.title = response.data;
     } catch (error) {
       console.error('Error fetching title details:', error);

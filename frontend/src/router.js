@@ -4,7 +4,7 @@ import DetailsView from './components/DetailsView.vue';
 
 const routes = [
   { path: '/', component: NetflixTable },
-  { path: '/:show_id', component: DetailsView, props: true },
+  { path: '/api/:search_provider/:show_id', component: DetailsView, props: true },
 ];
 
 const router = createRouter({

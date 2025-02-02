@@ -89,7 +89,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="title in titles" :key="title.show_id" @click="goToDetail(title.show_id)" class="clickable-row">
+            <tr v-for="title in titles" :key="title.show_id" @click="goToDetail(host, searchProvider, title.show_id)" class="clickable-row">
               <td>{{ title.title }}</td>
               <td>{{ title.release_year }}</td>
               <td>{{ title.type }}</td>
@@ -132,8 +132,8 @@ export default {
   setup() {
     const router = useRouter();
 
-    const goToDetail = (show_id) => {
-      router.push(`/${show_id}`);
+    const goToDetail = (host, searchProvider, show_id) => {
+      router.push(`/api/${searchProvider}/${show_id}`);
     };
 
     return { goToDetail };
